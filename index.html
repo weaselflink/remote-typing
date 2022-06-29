@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Remote typing</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        @font-face {
+            font-family: "BigBlue-Terminal";
+            src: url("fonts/BigBlue_TerminalPlus.TTF") format("truetype");
+        }
+
+        #main {
+            padding: 20px;
+        }
+
+        #main button {
+            font-family: monospace;
+            font-size: xxx-large;
+        }
+
+        #input {
+            padding: 20px;
+            font-family: monospace;
+        }
+
+        #input-text {
+            border: none;
+        }
+
+        #output {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: greenyellow;
+            font-family: BigBlue-Terminal, monospace;
+            font-size: xx-large;
+            height: 100%;
+        }
+
+        #output > div {
+            padding: 20px;
+        }
+    </style>
+    <script type="application/ecmascript">
+        const storage_key = 'remote-typing';
+        const history = JSON.parse(localStorage.getItem(storage_key) || '[]');
+
+        const remove_all_children = (element) => {
+            while (element.lastChild) {
+                element.removeChild(element.lastChild);
+            }
+        };
+
+        const update_output = (output_text, entries) => {
+            remove_all_children(output_text);
+            (entries || []).forEach((entry) => {
+                const item = document.createElement('p');
+                item.textContent = entry;
+                output_text.appendChild(item);
+            });
+        };
+
+        const update_input_history = (input_history, entries) => {
+            remove_all_children(input_history);
+            (entries || []).forEach((entry) => {
+                const item = document.createElement('p');
+                item.textContent = entry;
+                input_history.appendChild(item);
+            });
+        };
+
+        const type = (input, input_history) => {
+            const text = input.value;
+            input.value = '';
+            const entry = document.createElement('p');
+            entry.textContent = text;
+            history.push(text);
+            console.log(history);
+            localStorage.setItem(storage_key, JSON.stringify(history));
+            input_history.appendChild(entry);
+        };
+
+        const init = () => {
+            const main = document.querySelector('#main');
+            const input = document.querySelector('#input');
+            const output = document.querySelector('#output');
+            const output_text = document.querySelector('#output-text');
+            const input_text = document.querySelector('#input-text');
+            const input_history = document.querySelector('#input-history');
+
+            document.querySelector('#main-input').onclick = () => {
+                main.style.display = 'none';
+                input.style.display = 'block';
+                output.style.display = 'none';
+
+                update_input_history(input_history, history);
+
+                input_text.value = '';
+                input_text.focus();
+                input_text.onkeypress = (event) => {
+                    if (event.code === 'Enter') {
+                        type(event.target, input_history);
+                        return false;
+                    }
+                    return true;
+                };
+            };
+            document.querySelector('#main-output').onclick = () => {
+                main.style.display = 'none';
+                input.style.display = 'none';
+                output.style.display = 'block';
+
+                update_output(output_text, JSON.parse(localStorage.getItem(storage_key)));
+                window.onstorage = (event) => {
+                    if (event.key === storage_key) {
+                        update_output(output_text, JSON.parse(event.newValue));
+                    }
+                };
+            };
+        };
+
+        document.onreadystatechange = init;
+    </script>
+</head>
+<body>
+<div id="main">
+    <button id="main-input">Input</button>
+    <button id="main-output">Output</button>
+</div>
+<div id="input" style="display: none;">
+    <div id="input-history"></div>
+    <textarea id="input-text"></textarea>
+</div>
+<div id="output" style="display: none;">
+    <div id="output-text"></div>
+</div>
+</body>
+</html>
