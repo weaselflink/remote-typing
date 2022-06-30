@@ -39,27 +39,49 @@
         }
 
         #input {
-            padding: 20px;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            min-height: 100%;
+            position: absolute;
             font-family: monospace;
+            font-size: x-large;
+        }
+
+        #input-wrapper {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            padding: 2vw;
         }
 
         #input-text {
-            margin: 5px;
-            padding: 5px;
+            width: 92vw;
+            margin: 1vw;
+            padding: 1vw;
             border: 1px solid black;
+            font-family: monospace;
+            font-size: x-large;
         }
 
         #output {
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            min-height: 100%;
+            position: absolute;
             margin: 0;
             padding: 0;
             background-color: black;
             color: greenyellow;
             font-family: 'BigBlue TerminalPlus', monospace;
             font-size: xx-large;
-            height: 100%;
         }
 
-        #output > div {
+        #output-text {
+            position: relative;
+            left: 0;
+            bottom: 0;
             padding: 20px;
         }
     </style>
@@ -84,7 +106,7 @@
             remove_all_children(output_text);
             (history || fetch_history()).forEach((entry) => {
                 const item = document.createElement('p');
-                item.textContent = entry;
+                item.textContent = '> ' + entry;
                 output_text.appendChild(item);
             });
         };
@@ -167,9 +189,11 @@
     <button id="main-output">output</button>
 </div>
 <div id="input" style="display: none;">
-    <div id="input-history"></div>
-    <input type="text" id="input-text"/><br>
-    <button id="input-clear">clear</button>
+    <div id="input-wrapper">
+        <div id="input-history"></div>
+        <input type="text" id="input-text"/><br>
+        <button id="input-clear">clear</button>
+    </div>
 </div>
 <div id="output" style="display: none;">
     <div id="output-text"></div>
