@@ -65,7 +65,14 @@
     </style>
     <script type="application/ecmascript">
         const storage_key = 'remote-typing';
-        let history = JSON.parse(localStorage.getItem(storage_key) || '[]');
+
+        const fetch_history = () => {
+            return JSON.parse(localStorage.getItem(storage_key) || '[]');
+        };
+
+        const set_history = (history) => {
+            localStorage.setItem(storage_key, JSON.stringify(history));
+        };
 
         const remove_all_children = (element) => {
             while (element.lastChild) {
@@ -73,18 +80,18 @@
             }
         };
 
-        const update_output = (output_text, entries) => {
+        const update_output = (output_text, history) => {
             remove_all_children(output_text);
-            (entries || []).forEach((entry) => {
+            (history || fetch_history()).forEach((entry) => {
                 const item = document.createElement('p');
                 item.textContent = entry;
                 output_text.appendChild(item);
             });
         };
 
-        const update_input_history = (input_history, entries) => {
+        const update_input_history = (input_history) => {
             remove_all_children(input_history);
-            (entries || []).forEach((entry) => {
+            fetch_history().forEach((entry) => {
                 const item = document.createElement('p');
                 item.textContent = entry;
                 input_history.appendChild(item);
@@ -96,15 +103,15 @@
             input.value = '';
             const entry = document.createElement('p');
             entry.textContent = text;
+            const history = fetch_history()
             history.push(text);
-            localStorage.setItem(storage_key, JSON.stringify(history));
+            set_history(history);
             input_history.appendChild(entry);
         };
 
         const clear = (input_history) => {
-            history = [];
-            localStorage.setItem(storage_key, JSON.stringify(history));
-            update_input_history(input_history, history);
+            set_history([]);
+            update_input_history(input_history);
         };
 
         const init = () => {
@@ -121,7 +128,7 @@
                 input.style.display = 'block';
                 output.style.display = 'none';
 
-                update_input_history(input_history, history);
+                update_input_history(input_history);
 
                 input_text.value = '';
                 input_text.focus();
@@ -142,7 +149,7 @@
                 input.style.display = 'none';
                 output.style.display = 'block';
 
-                update_output(output_text, JSON.parse(localStorage.getItem(storage_key)));
+                update_output(output_text);
                 window.onstorage = (event) => {
                     if (event.key === storage_key) {
                         update_output(output_text, JSON.parse(event.newValue));
