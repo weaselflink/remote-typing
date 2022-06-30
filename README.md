@@ -23,6 +23,6 @@ adds the typed messages to storage. The output window listens to
 [storage events](https://developer.mozilla.org/en-US/docs/Web/API/StorageEvent) and updates the 
 view on any changes.
 
-Everything needed for running the tool is contained in a single file (index.html). So simply
+Everything needed for running the tool is contained in a single file (remote-typing.html). So simply
 store that file locally and open it in the browser, no web server required. Interestingly, local
 storage also works for local files.
