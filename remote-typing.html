@@ -86,6 +86,7 @@
         }
 	</style>
 	<script type="application/ecmascript">
+		const prompt = '> ';
 		const storage_key = 'remote-typing';
 
 		const fetch_history = () => {
@@ -103,12 +104,27 @@
 		};
 
 		const update_output = (output_text, history) => {
-			remove_all_children(output_text);
-			(history || fetch_history()).forEach((entry) => {
-				const item = document.createElement('p');
-				item.textContent = '> ' + entry;
-				output_text.appendChild(item);
-			});
+			const current_history = (history || fetch_history());
+			if (current_history.length === 0) {
+				remove_all_children(output_text);
+				return;
+			}
+			const current_output = document.querySelectorAll('#output-text > p');
+			let index = 0;
+			while (index < Math.max(current_history.length, current_output.length)) {
+				if (index < Math.min(current_history.length, current_output.length)) {
+					if (current_output[index].textContent !== current_history[index]) {
+						current_output[index].textContent = prompt + current_history[index];
+					}
+				} else if (index < current_history.length) {
+					const item = document.createElement('p');
+					item.textContent = prompt + current_history[index];
+					output_text.appendChild(item);
+				} else if (index < current_output.length) {
+					output_text.removeChild(current_output[index]);
+				}
+				index++;
+			}
 		};
 
 		const update_input_history = (input_history) => {
