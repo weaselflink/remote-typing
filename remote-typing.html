@@ -109,7 +109,10 @@
 			output_text.appendChild(item);
 		};
 
-		const update_output = (output_text, history) => {
+		const update_output = (history) => {
+			const output_text = document.querySelector('#output-text');
+			if (!output_text) return;
+
 			const current_history = (history || fetch_history());
 			if (current_history.length === 0) {
 				remove_all_children(output_text);
@@ -120,7 +123,7 @@
 			let index = 0;
 			while (index < current_history.length || index < current_output.length) {
 				if (index < current_history.length && index < current_output.length) {
-					if (current_output[index].textContent !== current_history[index]) {
+					if (current_output[index].textContent !== prompt + current_history[index]) {
 						current_output[index].textContent = prompt + current_history[index];
 					}
 				} else if (index < current_history.length) {
@@ -172,7 +175,6 @@
 		};
 
 		const init = () => {
-			const output_text = document.querySelector('#output-text');
 			const input_text = document.querySelector('#input-text');
 			const input_clear = document.querySelector('#input-clear');
 			const input_history = document.querySelector('#input-history');
@@ -199,10 +201,10 @@
 			document.querySelector('#main-output').onclick = () => {
 				switch_view('output');
 
-				update_output(output_text);
+				update_output();
 				window.onstorage = (event) => {
 					if (event.key === storage_key) {
-						update_output(output_text, JSON.parse(event.newValue));
+						update_output(JSON.parse(event.newValue));
 					}
 				};
 			};
