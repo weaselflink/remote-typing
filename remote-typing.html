@@ -103,16 +103,23 @@
 			}
 		};
 
+		const add_empty_prompt = (output_text) => {
+			const item = document.createElement('p');
+			item.textContent = prompt;
+			output_text.appendChild(item);
+		};
+
 		const update_output = (output_text, history) => {
 			const current_history = (history || fetch_history());
 			if (current_history.length === 0) {
 				remove_all_children(output_text);
+				add_empty_prompt(output_text);
 				return;
 			}
 			const current_output = document.querySelectorAll('#output-text > p');
 			let index = 0;
-			while (index < Math.max(current_history.length, current_output.length)) {
-				if (index < Math.min(current_history.length, current_output.length)) {
+			while (index < current_history.length || index < current_output.length) {
+				if (index < current_history.length && index < current_output.length) {
 					if (current_output[index].textContent !== current_history[index]) {
 						current_output[index].textContent = prompt + current_history[index];
 					}
@@ -125,6 +132,7 @@
 				}
 				index++;
 			}
+			add_empty_prompt(output_text);
 		};
 
 		const update_input_history = (input_history) => {
