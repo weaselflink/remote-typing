@@ -114,11 +114,6 @@
 			if (!output_text) return;
 
 			const current_history = (history || fetch_history());
-			if (current_history.length === 0) {
-				remove_all_children(output_text);
-				add_empty_prompt(output_text);
-				return;
-			}
 			const current_output = document.querySelectorAll('#output-text > p');
 			let index = 0;
 			while (index < current_history.length || index < current_output.length) {
