@@ -136,19 +136,25 @@
 			update_input_history(input_history);
 		};
 
+		const switch_view = (name) => {
+			document.querySelectorAll('body > div')
+				.forEach((element) => {
+					if (element.id === name) {
+						element.style.display = 'block';
+					} else {
+						element.style.display = 'none';
+					}
+				});
+		};
+
 		const init = () => {
-			const main = document.querySelector('#main');
-			const input = document.querySelector('#input');
-			const output = document.querySelector('#output');
 			const output_text = document.querySelector('#output-text');
 			const input_text = document.querySelector('#input-text');
 			const input_clear = document.querySelector('#input-clear');
 			const input_history = document.querySelector('#input-history');
 
 			document.querySelector('#main-input').onclick = () => {
-				main.style.display = 'none';
-				input.style.display = 'block';
-				output.style.display = 'none';
+				switch_view('input');
 
 				update_input_history(input_history);
 
@@ -167,9 +173,7 @@
 				};
 			};
 			document.querySelector('#main-output').onclick = () => {
-				main.style.display = 'none';
-				input.style.display = 'none';
-				output.style.display = 'block';
+				switch_view('output');
 
 				update_output(output_text);
 				window.onstorage = (event) => {
